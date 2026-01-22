@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Basic Banking System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>🏦 Basic Banking System</h1>
+
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            {% for message in messages %}
+              <div class="alert">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <div class="grid">
+            <section class="card">
+                <h3>Create New Account</h3>
+                <form action="/create" method="POST">
+                    <input type="text" name="name" placeholder="Account Holder Name" required>
+                    <input type="text" name="acc_num" placeholder="Account Number" required>
+                    <input type="number" name="balance" placeholder="Initial Balance" step="0.01" required>
+                    <button type="submit" class="btn-create">Create Account</button>
+                </form>
+            </section>
+
+            <section class="card">
+                <h3>Deposit / Withdraw</h3>
+                <form action="/transaction" method="POST">
+                    <input type="text" name="acc_num" placeholder="Account Number" required>
+                    <input type="number" name="amount" placeholder="Amount" step="0.01" required>
+                    <div class="btn-group">
+                        <button type="submit" name="action" value="deposit" class="btn-dep">Deposit</button>
+                        <button type="submit" name="action" value="withdraw" class="btn-wit">Withdraw</button>
+                    </div>
+                </form>
+            </section>
+        </div>
+
+        {% if highest_acc %}
+        <div class="high-balance">
+             <strong>Highest Balance:</strong> {{ highest_acc.name }} (Acc: {{ highest_acc.acc_num }}) with ₹{{ highest_acc.balance }}
+        </div>
+        {% endif %}
+
+        <section class="card">
+            <h3>All Registered Accounts</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Account Number</th>
+                        <th>Holder Name</th>
+                        <th>Current Balance</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for acc_num, data in accounts.items() %}
+                    <tr>
+                        <td>{{ acc_num }}</td>
+                        <td>{{ data.name }}</td>
+                        <td>₹{{ "%.2f"|format(data.balance) }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+    </div>
+</body>
+</html>
